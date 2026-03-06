@@ -252,3 +252,6 @@ See [HACKING.md](HACKING.md) for local development and testing instructions.
 - For ticket creation: integration with your issue tracker (CLI, MCP server, or API)
 
 [cc]: https://claude.ai/code
+
+## Acknowledgments
+This project is a fork of [claude-swe-workflows](https://github.com/chrisallenlane/claude-swe-workflows) by @chrisallenlane, whose work is outstanding! 🎉
