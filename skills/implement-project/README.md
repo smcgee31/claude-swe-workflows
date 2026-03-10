@@ -1,10 +1,10 @@
-# /project - Full-Lifecycle Project Workflow
+# /implement-project - Full-Lifecycle Project Workflow
 
-> **Upgrading from v1.x?** The v1.x `/project` skill (single-batch orchestration) has been renamed to [`/batch`](../batch/README.md). The `/project` name now refers to this multi-batch full-lifecycle workflow, which invokes `/batch` internally for each batch. If you were using v1.x `/project` for a single batch of tickets, use `/batch` instead.
+> **Upgrading from v1.x?** The v1.x `/implement-project` skill (single-batch orchestration) has been renamed to [`/implement-batch`](../implement-batch/README.md). The `/implement-project` name now refers to this multi-batch full-lifecycle workflow, which invokes `/implement-batch` internally for each batch. If you were using v1.x `/implement-project` for a single batch of tickets, use `/implement-batch` instead.
 
 ## Overview
 
-The `/project` skill orchestrates an entire project from tickets to release-ready code. It takes batched tickets, implements each batch via the `/batch` workflow in autonomous mode, runs smoke tests, then executes a comprehensive quality pipeline (refactor, arch-review, test-review, doc-review, release-review). The result is a single project branch ready for human review and merge.
+The `/implement-project` skill orchestrates an entire project from tickets to release-ready code. It takes batched tickets, implements each batch via the `/implement-batch` workflow in autonomous mode, runs smoke tests, then executes a comprehensive quality pipeline (refactor, arch-review, test-review, doc-review, release-review). The result is a single project branch ready for human review and merge.
 
 **Key benefits:**
 - Full project lifecycle in a single invocation
@@ -17,25 +17,25 @@ The `/project` skill orchestrates an entire project from tickets to release-read
 
 ## When to Use
 
-**Use `/project` for:**
+**Use `/implement-project` for:**
 - Multi-batch projects spanning multiple features or subsystems
 - Milestone implementations where tickets are naturally grouped into phases
 - Projects where the full quality pipeline adds value (refactoring, arch review, test review, doc review, release review)
 - Work where you want to walk away and come back to a finished, polished result
 
-**Don't use `/project` for:**
-- A single batch of tickets (use `/batch` directly)
-- Single tickets (use `/iterate` or `/bugfix` directly)
+**Don't use `/implement-project` for:**
+- A single batch of tickets (use `/implement-batch` directly)
+- Single tickets (use `/implement` or `/bugfix` directly)
 - Exploratory work or prototyping
 - Projects with heavy user collaboration needed during implementation
 
-**Rule of thumb:** If you have multiple batches of tickets that form a cohesive project, use `/project`. If it's a single batch, use `/batch`.
+**Rule of thumb:** If you have multiple batches of tickets that form a cohesive project, use `/implement-project`. If it's a single batch, use `/implement-batch`.
 
 ## Workflow Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ /project Workflow                                               │
+│ /implement-project Workflow                                               │
 └─────────────────────────────────────────────────────────────────┘
 
  ┌──────────────────────────────────────────────┐
@@ -85,7 +85,7 @@ The `/project` skill orchestrates an entire project from tickets to release-read
  │      feat/batch-<descriptive-name>           │
  │      from project branch                     │
  ├──────────────────────────────────────────────┤
- │  5b. Run /batch (autonomous mode)            │
+ │  5b. Run /implement-batch (autonomous mode)            │
  │      • Tickets pre-loaded                    │
  │      • Plan approved by orchestrator         │
  │      • Branch creation skipped               │
@@ -192,7 +192,7 @@ For each batch:
 
 **5a. Create batch branch** (`feat/batch-<descriptive-name>`) from the project branch.
 
-**5b. Run `/batch` in autonomous mode.** The full `/batch` workflow runs with overrides:
+**5b. Run `/implement-batch` in autonomous mode.** The full `/implement-batch` workflow runs with overrides:
 - Tickets are pre-loaded (no user prompting for ticket specification)
 - The batch execution plan is approved by the orchestrator autonomously (using `/deliberate` for unclear ordering decisions)
 - Branch creation is skipped — the batch branch is already set up
@@ -285,7 +285,7 @@ main
            └── feat/issue-25-responsive-layout (topic, merged + deleted)
 ```
 
-- Each ticket gets a topic branch (managed by `/batch`)
+- Each ticket gets a topic branch (managed by `/implement-batch`)
 - Topic branches merge into the batch branch
 - Batch branches merge into the project branch
 - The user merges the project branch into main after final review
@@ -351,7 +351,7 @@ The orchestrator is encouraged to `/deliberate` before pulling the andon cord fo
 ### Example 1: Multi-Batch Project
 
 ```
-User: /project
+User: /implement-project
 
 Which tickets belong to this project?
 > All tickets tagged "v2.0" — they're grouped as batch-1 and batch-2
@@ -383,7 +383,7 @@ Initializing PROJECT_PROGRESS.md
 
 [Batch 1: core-features]
 Creating batch branch: feat/batch-core-features
-Running /batch (autonomous mode)...
+Running /implement-batch (autonomous mode)...
   [#12] Implemented auth — JWT with refresh tokens
   [#18] Implemented metrics — Prometheus endpoint
   [#15] Fixed cache — added RWMutex protection
@@ -394,7 +394,7 @@ Post-merge verification: all tests pass
 
 [Batch 2: ui-overhaul]
 Creating batch branch: feat/batch-ui-overhaul
-Running /batch (autonomous mode)...
+Running /implement-batch (autonomous mode)...
   [#22] Implemented dashboard — React components
   [#25] Implemented responsive layout — CSS grid
   /refactor: no changes needed
@@ -458,9 +458,9 @@ All smoke tests pass
 ```
 [Batch 2: ui-overhaul]
 Creating batch branch: feat/batch-ui-overhaul
-Running /batch (autonomous mode)...
+Running /implement-batch (autonomous mode)...
   [#22] Implemented dashboard — React components
-  [#25] Running /iterate (autonomous)...
+  [#25] Running /implement (autonomous)...
   [#25] Acceptance verification: FAIL (attempt 1/3)
   [#25] Acceptance verification: FAIL (attempt 2/3)
   [#25] Acceptance verification: FAIL (attempt 3/3)
@@ -468,7 +468,7 @@ Running /batch (autonomous mode)...
 ⚠ ANDON CORD — Stopping all work
 
 Ticket #25 (Responsive layout) failed acceptance verification
-3 times during /iterate step 4 within /batch.
+3 times during /implement step 4 within /implement-batch.
 
 Specific failures:
 - CSS grid doesn't render correctly in Safari
@@ -507,9 +507,9 @@ Skipping /refactor (pass 2): arch-review was skipped
 
 | Skill              | Relationship                                                                                        |
 |--------------------|-----------------------------------------------------------------------------------------------------|
-| `/scope`           | Creates tickets that `/project` consumes. Typical flow: `/scope` → organize into batches → `/project`. |
-| `/batch`           | Runs inside `/project` for each batch. `/project` adds multi-batch coordination, smoke testing, and the quality pipeline. |
-| `/iterate`         | Runs inside `/batch` for each ticket. The innermost implementation loop.                            |
+| `/scope`           | Creates tickets that `/implement-project` consumes. Typical flow: `/scope` → organize into batches → `/implement-project`. |
+| `/implement-batch`           | Runs inside `/implement-project` for each batch. `/implement-project` adds multi-batch coordination, smoke testing, and the quality pipeline. |
+| `/implement`         | Runs inside `/implement-batch` for each ticket. The innermost implementation loop.                            |
 | `/refactor`        | Runs as project-level quality pass (MAXIMUM aggression) and within each batch (SAFE aggression).    |
 | `/arch-review`     | Runs as project-level quality pass in autonomous mode.                                              |
 | `/test-review`     | Runs as project-level quality pass.                                                                 |
@@ -520,9 +520,9 @@ Skipping /refactor (pass 2): arch-review was skipped
 
 **Hierarchy:**
 ```
-/project
-├── /batch (per batch)
-│   ├── /iterate (per ticket)
+/implement-project
+├── /implement-batch (per batch)
+│   ├── /implement (per ticket)
 │   ├── /refactor (per-batch quality)
 │   └── /doc-review (per-batch quality)
 ├── /refactor (project-level quality)
@@ -580,6 +580,6 @@ Skipping /refactor (pass 2): arch-review was skipped
 - Critical system error
 
 **Do NOT abort for:**
-- Individual ticket failures within a batch (handled by `/batch`)
+- Individual ticket failures within a batch (handled by `/implement-batch`)
 - Quality pass recommendations the orchestrator disagrees with (defer them)
 - Minor issues that can be noted in the final report
