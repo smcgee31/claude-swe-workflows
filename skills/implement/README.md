@@ -59,13 +59,17 @@ The `/implement` skill orchestrates a complete development workflow through spec
  │  Agent: Language-specific SME or generalist  │
  │                                              │
  │  Detects project type:                       │
- │  • Go       → swe-sme-golang                 │
- │  • GraphQL  → swe-sme-graphql                │
- │  • Docker   → swe-sme-docker                 │
- │  • Makefile → swe-sme-makefile               │
- │  • Ansible  → swe-sme-ansible                │
- │  • Zig      → swe-sme-zig                    │
- │  • Other    → Generalist implementation      │
+ │  • Go         → swe-sme-golang               │
+ │  • GraphQL    → swe-sme-graphql              │
+ │  • Docker     → swe-sme-docker               │
+ │  • Makefile   → swe-sme-makefile             │
+ │  • Ansible    → swe-sme-ansible              │
+ │  • Zig        → swe-sme-zig                  │
+ │  • HTML       → swe-sme-html                 │
+ │  • CSS        → swe-sme-css                  │
+ │  • JavaScript → swe-sme-javascript           │
+ │  • TypeScript → swe-sme-typescript           │
+ │  • Other      → Generalist implementation    │
  │                                              │
  │  Implements feature + writes unit tests      │
  └──────────────────┬───────────────────────────┘
@@ -92,7 +96,7 @@ The `/implement` skill orchestrates a complete development workflow through spec
  │  Conditional reviews based on code changes:  │
  │                                              │
  │  5a. Security (if sensitive code)            │
- │      Agent: sec-reviewer                     │
+ │      Agent: sec-blue-teamer│
  │      Authority: Can demand changes           │
  │                                              │
  │  5b. Refactoring (if non-trivial)            │
@@ -203,6 +207,10 @@ A language-specific specialist (or generalist) implements the feature:
 - `swe-sme-makefile` - Makefiles and build systems
 - `swe-sme-ansible` - Ansible playbooks and roles
 - `swe-sme-zig` - Zig projects
+- `swe-sme-html` - HTML structure and semantics
+- `swe-sme-css` - CSS styling and layout
+- `swe-sme-javascript` - Vanilla JavaScript
+- `swe-sme-typescript` - TypeScript
 
 ### 4. Quality Assurance - Acceptance Verification (CRITICAL GATE)
 The `qa-engineer` performs practical verification before writing tests:
@@ -231,8 +239,8 @@ All reviewers run conditionally based on code changes and provide feedback. The 
 
 **5a. Security Review (Has Authority):**
 If security-sensitive code changed (auth, crypto, input validation):
-- `sec-reviewer` analyzes for vulnerabilities
-- Checks for OWASP top 10 issues
+- `sec-blue-teamer` evaluates defensive security posture
+- Checks control consistency, defense-in-depth, and configuration
 - **Has authority to demand changes** - critical/high severity findings must be addressed or require explicit user approval
 
 **5b. Refactoring Review (Advisory):**
@@ -357,7 +365,7 @@ Workflow:
 3. Implement: swe-sme-graphql implements following plan, writes resolver tests
 4. QA (acceptance): qa-engineer spawns test agent, actually tests password reset
                     flow end-to-end, verifies feature works
-5. Review: sec-reviewer finds timing attack vulnerability, recommends constant-time comparison
+5. Review: sec-blue-teamer finds timing attack vulnerability, recommends constant-time comparison
           swe-refactor suggests extracting email service
           (performance reviews skipped - not applicable)
 6. Respond: swe-sme-graphql addresses security issue (must fix), implements email extraction

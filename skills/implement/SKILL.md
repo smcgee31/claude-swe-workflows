@@ -72,6 +72,10 @@ After requirements are clear, assess whether planning is warranted:
 - If GraphQL schema/resolvers: spawn `swe-sme-graphql` agent
 - If Ansible playbooks/roles: spawn `swe-sme-ansible` agent
 - If Zig project: spawn `swe-sme-zig` agent
+- If TypeScript project (`.ts` files, `tsconfig.json`): spawn `swe-sme-typescript` agent
+- If vanilla JavaScript (`.js` files, no TypeScript): spawn `swe-sme-javascript` agent
+- If HTML/markup changes: spawn `swe-sme-html` agent
+- If CSS/styling changes: spawn `swe-sme-css` agent
 - Otherwise: implement directly with general best practices
 
 **Pass plan to implementation agent if planning was done:**
@@ -120,13 +124,13 @@ Conditionally invoke specialized reviewers based on code changes and complexity.
 
 **If security-sensitive code changed (auth, crypto, input validation, data access):**
 
-**Spawn `sec-reviewer` agent:**
-- Analyzes code for security vulnerabilities
-- Identifies potential attack vectors
-- Reviews for OWASP top 10 issues
+**Spawn `sec-blue-teamer` agent:**
+- Evaluates defensive security posture of changed code
+- Checks control consistency, defense-in-depth, and configuration
+- Identifies systemic gaps that enable vulnerability classes
 - **Has authority to demand changes** - security issues should block or require explicit user approval
 
-**Output**: Security findings with severity levels (critical/high/medium/low)
+**Output**: Defense evaluation with severity levels (critical/high/low)
 
 #### 5b. Refactoring Review (Conditional - Advisory)
 
